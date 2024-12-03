@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Productos - Pastelería</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #ff6f61;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .search-container {
+            padding: 20px;
+            text-align: center;
+        }
+        .search-container input {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .product-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 250px; /* Asegura que todas las imágenes tengan la misma altura */
+            object-fit: cover; /* Mantiene la proporción de la imagen */
+            border-radius: 5px;
+        }
+        .product-title {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #333;
+        }
+        .product-category {
+            font-size: 14px;
+            color: #777;
+        }
+        .product-description {
+            font-size: 14px;
+            color: #555;
+            margin: 10px 0;
+        }
+        .product-info button {
+            padding: 10px 15px;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .product-info button:hover {
+            background-color: #e55b51;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Buscador de Productos</h1>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Buscar productos...">
+    </div>
+
+    <div class="product-grid" id="productGrid">
+        <!-- Aquí se agregarán los productos dinámicamente -->
+    </div>
+
+    <script>
+        // Lista inicial de productos
+        const products = [
+            {
+                title: "Pastel Carlos V®",
+                category: "Chocolates",
+                description: "Experimenta el delicioso sabor del chocolate con nuestro Pastel Carlos V, cubierto con un irresistible betún de queso y chocolate Carlos V.",
+                image: "https://lh7-rt.googleusercontent.com/docsz/AD_4nXcHa_8-mLmw46ugl2yk-sNJExfSbcFe4VBs3cM_9YM__na3ayHM4GsYl_vDh1B5JBZyJ5vyBK8-gvpVJJfxvdPpPTGGY6KNUmlLsh_qNHAsM9-k-4uts9b_5GYwPRhqYdS1pu3sxQ?key=2CvgGwYW4-3YFO-oSvfvC6Gg"
+            },
+            {
+                title: "Pastel 3 Leches C/Fresas",
+                category: "Tres Leches",
+                description: "Sumérgete en la suavidad de nuestro Pastel 3 Leches con fresas. Con pan de vainilla empapado en tres leches, cubierto con crema sabor nata y frescas fresas.",
+                image: "https://lh7-rt.googleusercontent.com/docsz/AD_4nXdIIiC-S8OYTC48QCby6DktEX7xzxG-rO8iGMOctTDqIeVdEEO5dR46Lp0LG52DDS9jSH8FV5dTrk_g-6LVPnzlXHoGs2jYf5ZoRf56h2XVFtQ77VqGukM58fl2RSMJAPM-_3X4iQ?key=2CvgGwYW4-3YFO-oSvfvC6Gg"
+            },
+            {
+                title: "Pastel Tentación De Fresa",
+                category: "Tentaciones 3 Leches",
+                description: "Disfruta de nuestro Pastel Tentación De Fresa de 3 Leches de vainilla, cubierto con un delicioso betún de queso y decorado con fresas frescas.",
+                image: "https://lh7-rt.googleusercontent.com/docsz/AD_4nXek10Wp1Yo_-Hy7kQ_NG0z0esPB4wOfYiiEIvZbO0aF0A5fJoYbHGmyENcJFcbpOEcDvkrANZJ3qROxQAWVvFATgRG-6to-gmttOTrgrR6Y_8s9bh-bTvsaeRBxwEkMqLpwLt8aeg?key=2CvgGwYW4-3YFO-oSvfvC6Gg"
+            },
+            {
+                title: "Pastel 3 Leches Combinado",
+                category: "Tres Leches",
+                description: "Sumérgete en la suavidad de nuestro Pastel 3 Leches de vainilla, enriquecido con crema nata, frescas fresas y jugosa piña.",
+                image: "https://www.pastelerialety.com/on/demandware.static/-/Sites-pastelerialety/default/dw643afe54/Fotos%20Pasteleria%20Lety/pastel3lechescombinadogde_1.jpg"
+            }
+        ];
+
+        const productGrid = document.getElementById("productGrid");
+        const searchBar = document.getElementById("searchBar");
+
+        // Renderizar productos
+        function renderProducts(productsToRender) {
+            productGrid.innerHTML = ""; // Limpia la grid
+            productsToRender.forEach(product => {
+                const productCard = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.title}">
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-category">${product.category}</p>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-info">
+                            <a href="#"><button>Ver Más</button></a>
+                        </div>
+                    </div>
+                `;
+                productGrid.innerHTML += productCard;
+            });
+        }
+
+        // Filtrar productos
+        searchBar.addEventListener("input", (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.title.toLowerCase().includes(searchTerm) || 
+                product.category.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filteredProducts);
+        });
+
+        // Inicial
+        renderProducts(products);
+    </script>
+</body>
+</html>
